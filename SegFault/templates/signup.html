@@ -1,0 +1,41 @@
+{% extends "inc/base.html" %}
+
+{% block content %}
+
+  <h1 class="mt-5">Registration</h1>
+
+  <div><label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">This email adress is already registered!</label></div>
+  <div><label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">This nickname already exsist!</label></div>
+
+  <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Login</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, enter your login!</label>
+      <input type="login" class="form-control" id="exampleFormControlInput1" placeholder="Login" style="width: 50%;">
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Email</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, enter your email adress!</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Email" style="width: 50%;">
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">NickName</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, enter your nickname!</label>
+      <input type="nick-name" class="form-control" id="exampleFormControlInput1" placeholder="NickName" style="width: 50%;">
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Password</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Submit your password!</label>
+      <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="Password" style="width: 50%;">
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Password confirmation</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Passwords are different!</label>
+      <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="Repeat password" style="width: 50%;">
+  </div>
+  <div class="mb-3">
+      <label for="formFile" class="form-label">Upload avatar</label>
+      <input class="form-control" type="file" id="formFile">
+    </div>
+  <button class="btn btn-outline-primary" type="submit">Register!</button>
+
+{% endblock content %}

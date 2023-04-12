@@ -1,0 +1,37 @@
+{% load static %}
+
+<div class = "question">
+    <div class = "row">
+      <div class = "col-3">
+        <div class = "question-avatar">
+          <img src = "{% static "img/avatar2.png" %}" alt = "Avatar">
+        </div>
+      </div>
+      <div class = "col-9">
+        <h2><a href = "{% url "question" question.0.id %}">{{question.0.title}}</a></h2>
+        <div class = "question-text">{{question.text}}</div>
+        <div class = "row">
+          <div class = "col-4">
+                  <div class = "vote">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
+                      <button type="button" class="btn btn-danger">Bad Question</button>
+                      <button type="button" class="btn btn-success">Good Question</button>
+                  </div>
+              </div>
+          </div>
+          <div class = "col-2">
+            Answers({{question.1}})
+          </div>
+          <div class = "col-4">
+            Tags:
+            {% for tag in question.0.tag.all %}
+              <a href = "{% url "tag" tag.text %}">{{tag.text }}</a>
+            {% endfor %}
+          </div>
+          <div class = "col-2">
+            <div class = "rating">Rating: {{question.0.rating}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

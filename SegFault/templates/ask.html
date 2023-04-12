@@ -1,0 +1,24 @@
+{% extends "inc/base.html" %}
+
+{% block content %}
+
+  <h1 class="mt-5">New Question</h1>
+
+  <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Title</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, enter the title!</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Enter a title (100 symbols max)" maxlength="100">
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Text</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">You didn't write your answer!</label>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Put your question here"></textarea>
+  </div>
+  <div class="mb-3">
+      <label for="exampleFormControlInput1" class="form-label">Tags</label>
+      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, put some tags into this form!</label>
+      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Tag some tags (50 symbols max)" maxlength="50">
+  </div>
+  <button class="btn btn-outline-success" type="submit">ASK!</button>
+
+{% endblock content %}

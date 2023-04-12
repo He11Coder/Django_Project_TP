@@ -1,0 +1,13 @@
+{% extends "inc/base.html" %}
+
+{% block content %}
+
+  <h1 class="mt-5">New Questions<a href="{% url "hot" %}" style = "font-size: 0.7em;">Hot questions</a></h1>
+
+  {% for question in p %}
+      {% include "inc/question_item.html" %}
+  {% endfor %}
+
+  {% include "inc/paginator.html" %}
+
+{% endblock content %}   

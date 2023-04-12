@@ -1,0 +1,14 @@
+{% extends "inc/base.html" %}
+
+{% block content %}
+
+  <h1 class="mt-5">Tag: {{tag_text}}</h1>
+
+  {% for question in p %}
+      {% include "inc/question_item.html" %}
+  {% endfor %}
+
+  {% include "inc/paginator.html" %}
+
+{% endblock content %}
+        

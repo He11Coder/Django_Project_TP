@@ -1,0 +1,119 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="h-100" data-bs-theme="auto">
+  <head>
+    <meta charset="utf-8">
+
+    <title>SegFault.cpp</title>
+
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static "css/my.css" %}" rel="stylesheet">
+  </head>
+  <body class="d-flex flex-column h-100">
+
+    
+<header>
+  <!-- Fixed navbar -->
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+
+      <div class = "col-4">
+        <a class="navbar-brand" href="{% url "index" %}">SegmentationFault.cpp</a>
+      </div>
+
+      <div class = "col-4">
+
+        <div class = "row">
+        <div class = "col-6">
+          <form class="d-flex" role="search">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-primary" type="submit">Search!</button>
+          </form>
+        </div>
+
+        <div class = "col-6">
+          <form class="d-flex" role="search" action="{% url "ask" %}">
+            <button class="btn btn-outline-success" type="submit">ASK!</button>
+          </form>
+        </div>
+      </div>
+      </div>
+
+      <div class = "col-4">
+        <div class = "row">
+
+        <div class = "col-5">
+          <div class = "user-name">
+            Top_User
+          </div>
+        </div>
+
+        <div class = "col-3">
+          <div class = "user-block-href"><a href = "{% url "settings" %}">Settings</a></div>
+          <div class = "user-block-href"><a href = "{% url "index" %}">Log out</a></div>
+        </div>
+
+        <div class = "col-4">
+          <div class = "user-avatar ">
+            <img src = "{% static "img/ava_tyan.jpg" %}" class = "img-fluid" alt="Avatar">
+          </div>
+        </div>
+
+        </div>
+      </div>
+
+      <!--<div class = "col-4">
+        
+        <div class = "user-block-href-anonymous"><a href = "{% url "login" %}">Log In</a></div>
+        <div class = "user-block-href-anonymous"><a href = "{% url "signup" %}">Register</a></div>
+
+      </div>-->
+
+    </div>
+
+
+  </nav>
+</header>
+
+<!-- Begin page content -->
+<main class="flex-shrink-0">
+  <div class="container">
+
+    <div class = "row">
+      <div class = "col-9">
+
+        {% block content %} {% endblock content %}
+
+      </div>
+      <div class = "col-3">
+        <div class ="popular-tags">
+          <h2>Popular Tags</h2>
+          {% for curr_tag in top_tags %}
+          <a href = "{% url "tag" curr_tag.text %}">{{curr_tag.text }}</a>
+          {% endfor %}
+        </div>
+
+        <div class = "best-members"> 
+          <h2>Best Members</h2>
+          {% for curr_user in top_users %}
+            <div><a href = "#">{{curr_user.user.get_username}}</a></div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer mt-auto py-3 bg-body-tertiary">
+  <div class="container">
+    <span class="text-body-secondary">Technopark VK 2023. All rights reserved.</span>
+  </div>
+</footer>
+
+
+  </body>
+</html>

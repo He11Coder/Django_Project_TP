@@ -1,0 +1,59 @@
+{% extends "inc/base.html" %}
+{% load static %}
+
+{% block content %}
+
+  <div class = "single-question">
+    <div class = "row">
+      <div class = "col-3">
+        <div class = "question-avatar">
+          <img src = "{% static "img/avatar2.png" %}" alt = "Avatar">
+        </div>
+      </div>
+      <div class = "col-9">
+        <h2>{{question.title}}</h2>
+        <div class = "question-text">{{question.text}}</div>
+
+        <div class = "row">
+          <div class = "col-4">
+                  <div class = "vote">
+                  <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
+                      <button type="button" class="btn btn-danger">Bad Question</button>
+                      <button type="button" class="btn btn-success">Good Question</button>
+                  </div>
+              </div>
+          </div>
+          <div class = "col-6">
+            Tags:
+            {% for tag in question.tag.all %}
+              <a href = "{% url "tag" tag.text %}">{{tag.text }}</a>
+            {% endfor %}
+          </div>
+          <div class = "col-2">
+              <div class = "rating">Rating: {{question.rating}}</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class = "underline"></div>
+
+  {% for answer in p %}
+      {% include "inc/answer.html" %}
+  {% endfor %}
+
+  <div class = "underline"></div>
+
+  <div class="mb-3">
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Put your answer here"></textarea>
+  </div>
+
+  <div class = "answer-button">
+      <button class="btn btn-outline-success" type="submit">Answer!</button>
+  </div>
+
+  {% include "inc/paginator.html" %}
+
+{% endblock content %}

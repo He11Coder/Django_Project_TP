@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class = "answer">
+    <div class = "row">
+      <div class = "col-2">
+        <div class = "answer-avatar">
+          <img src = "{% static "img/download.jpeg" %}" alt = "Avatar">
+        </div>
+
+      </div>
+      <div class = "col-10">
+        <div class = "answer-text">{{answer.text}}</div>
+
+        <div class = "row">
+            <div class = "col-3">
+                <div class = "vote">
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
+                        <button type="button" class="btn btn-danger">Useless</button>
+                        <button type="button" class="btn btn-success">Usefull</button>
+                    </div>
+                </div>
+            </div>
+            <div class = "col-7">
+                <div class="form-check">
+                    {% if answer.is_correct %}
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckCheckedDisabled" checked disabled>
+                        <label class="form-check-label" for="flexCheckCheckedDisabled">
+                            Correct Answer!
+                        </label>
+                    {% endif %}
+                </div>
+            </div>
+            <div class = "col-2">
+                <div class = "rating">Rating: {{answer.rating}}</div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+</div>
