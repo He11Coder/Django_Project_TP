@@ -1,11 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.PROTECT, related_name = "profile")
     avatar = models.ImageField(null = True, blank = True)
-
+    
     def __str__(self):
         return self.user.get_username()
 
@@ -70,8 +69,20 @@ class Tag(models.Model):
         return self.text
 
 
-class Vote(models.Model):
+#class Vote(models.Model):
+#    value = models.BooleanField(null = True)
+#    author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
+#    answer_id = models.ForeignKey("Answer", on_delete = models.PROTECT, null = True)
+#    question_id = models.ForeignKey("Question", on_delete = models.PROTECT, null = True)
+
+
+class QuestionLikes(models.Model):
+    value = models.BooleanField(null = True)
+    author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
+    question_id = models.ForeignKey("Question", on_delete = models.PROTECT, null = True)
+
+
+class AnswerLikes(models.Model):
     value = models.BooleanField(null = True)
     author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
     answer_id = models.ForeignKey("Answer", on_delete = models.PROTECT, null = True)
-    question_id = models.ForeignKey("Question", on_delete = models.PROTECT, null = True)

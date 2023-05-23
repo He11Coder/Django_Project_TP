@@ -13,3 +13,8 @@ def top_tags(request):
     return {
         'top_tags' : result
     }
+
+def request(request):
+    return {
+        'request' : request
+    }

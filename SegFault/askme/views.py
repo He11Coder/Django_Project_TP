@@ -1,7 +1,13 @@
-from .models import Profile, Question, Answer, Tag
-from django.shortcuts import render
+from .forms import LoginForm, RegistrationForm, ProfileEditForm, AskForm, AnswerForm
+from .models import Profile, Question, Answer, Tag, User
+from django.shortcuts import render, redirect
+from django.contrib import auth
 from django.http import HttpResponseNotFound
 from django.core.paginator import Paginator
+from django.urls import reverse
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django import forms
 
 
 PAGINATE_BY = 4
@@ -45,25 +51,80 @@ def question(request, question_id):
         return HttpResponseNotFound("Error 404: Not Found")
 
     question_to_view = Question.objects.get(pk = question_id)
-    answers_to_view = Answer.objects.find_by_question_id(question_id).order_by("-is_correct", "-rating")
+
+    if request.method == 'GET':
+        answers_to_view = Answer.objects.find_by_question_id(question_id).order_by("-is_correct", "-rating", "created")
+        answer_form = AnswerForm()
+    elif request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(reverse('login'))
+        
+        answer_form = AnswerForm(request.POST)
+        if answer_form.is_valid():
+            answer_form.save(username = request.user, question_id = question_id)
+
+            answers_to_view = Answer.objects.find_by_question_id(question_id).order_by("-is_correct", "-rating", "created")
+            page_with_curr_answer = Paginator(answers_to_view, PAGINATE_BY).num_pages
+            return redirect(reverse('question', args = [question_id]) + f'?p={page_with_curr_answer}')
 
     context = {
         'question': question_to_view,
-        'p': pagination(answers_to_view, request, PAGINATE_BY)
+        'p': pagination(answers_to_view, request, PAGINATE_BY),
+        'form' : answer_form
     }
     return render(request, 'question.html', context)
 
 
+@login_required(login_url = '/login/')
 def ask(request):
-    return render(request, 'ask.html')
+    if request.method == 'GET':
+        ask_form = AskForm()
+    elif request.method == 'POST':
+        ask_form = AskForm(request.POST)
+        if ask_form.is_valid():
+            question_id = ask_form.save(request)
+            return redirect(reverse('question', args = [question_id]))
+
+    return render(request, 'ask.html', context = {'form' : ask_form})
 
 
 def registration(request):
-    return render(request, 'signup.html')
+    if request.method == 'GET':
+        user_form = RegistrationForm()
+    if request.method == 'POST':
+        user_form = RegistrationForm(request.POST)
+        if user_form.is_valid():
+            user_form.save()
+            nickname = user_form.cleaned_data['username']
+            password = user_form.cleaned_data['password']
+
+            auth_user = authenticate(username = nickname, password = password)
+            login(user = auth_user, request = request)
+            return redirect(reverse('index'))
+
+    return render(request, 'signup.html', context = {'form' : user_form})
 
 
-def login(request):
-    return render(request, 'login.html')
+def log_in(request):
+    if request.method == 'GET':
+        login_form = LoginForm()
+
+    elif request.method == 'POST':
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            user = auth.authenticate(request=request, **login_form.cleaned_data)
+            if user:
+                login(request, user)
+                next_url = request.GET.get('next')
+
+                if next_url:
+                    return redirect(next_url)
+                else:
+                    return redirect(reverse('index'))
+                
+            login_form.add_error(None, "Invalid username or password!")
+
+    return render(request, 'login.html', context = {'form' : login_form})
 
 
 def tag(request, tag_name):
@@ -90,5 +151,28 @@ def hot(request):
     return render(request, 'hot.html', context)
 
 
+@login_required(login_url='/login/')
 def settings(request):
-    return render(request, 'settings.html')
+    if request.method == 'GET':
+        settings_form = ProfileEditForm()
+    elif request.method == 'POST':
+        settings_form = ProfileEditForm(request.POST, files=request.FILES)
+        if settings_form.is_valid():
+            password = settings_form.cleaned_data['old_password']
+            if (not User.objects.get(username = request.user).check_password(password)):
+                settings_form.add_error(field = None, error = 'Incorrect current password')
+            else:
+                settings_form.save(request)
+                return redirect(reverse('settings'))
+        
+    return render(request, 'settings.html', context = {'form' : settings_form})
+
+
+@login_required(login_url='/login/', redirect_field_name = 'continue')
+def log_out(request):
+    logout(request)
+
+    if request.GET.get('continue'):
+        return redirect(request.GET.get('continue'))
+
+    return redirect('index')

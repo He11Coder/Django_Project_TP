@@ -46,14 +46,21 @@
         <div class = "row">
 
         <div class = "col-5">
-          <div class = "user-name">
-            Top_User
-          </div>
+          {% if request.user.is_authenticated %}
+            <div class = "user-name">
+              {{request.user}}
+            </div>
+          {% endif %}
         </div>
 
         <div class = "col-3">
-          <div class = "user-block-href"><a href = "{% url "settings" %}">Settings</a></div>
-          <div class = "user-block-href"><a href = "{% url "index" %}">Log out</a></div>
+          {% if request.user.is_authenticated %}
+            <div class = "user-block-href"><a href = "{% url 'settings' %}">Settings</a></div>
+            <div class = "user-block-href"><a href = "{% url 'logout' %}">Log out</a></div>
+          {% else %}
+            <div class = "user-block-href"><a href = "{% url 'login' %}">Log in</a></div>
+            <div class = "user-block-href"><a href = "{% url 'signup' %}">Sign up</a></div>
+          {% endif %}
         </div>
 
         <div class = "col-4">
@@ -64,13 +71,6 @@
 
         </div>
       </div>
-
-      <!--<div class = "col-4">
-        
-        <div class = "user-block-href-anonymous"><a href = "{% url "login" %}">Log In</a></div>
-        <div class = "user-block-href-anonymous"><a href = "{% url "signup" %}">Register</a></div>
-
-      </div>-->
 
     </div>
 

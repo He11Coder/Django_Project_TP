@@ -1,28 +1,15 @@
 {% extends "inc/base.html" %}
+{% load bootstrap5 %}
 
 {% block content %}
 
   <h1 class="mt-5">Settings</h1>
+  <form action = "/settings/", method = "post">
 
-  <div><label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">This email adress is already registered!</label></div>
-  <div><label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">This nickname already exsist!</label></div>
+    {% csrf_token %}
+    {% bootstrap_form form %}
 
-  <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Login</label>
-      <input type="login" class="form-control" id="exampleFormControlInput1" placeholder="New login" style="width: 50%;">
-  </div>
-  <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Email</label>
-      <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="New email adress" style="width: 50%;">
-  </div>
-  <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">NickName</label>
-      <input type="nick-name" class="form-control" id="exampleFormControlInput1" placeholder="New NickName" style="width: 50%;">
-  </div>
-  <div class="mb-3">
-      <label for="formFile" class="form-label">Upload avatar</label>
-      <input class="form-control" type="file" id="formFile">
-    </div>
-  <button class="btn btn-outline-primary" type="submit">Save</button>
+    <button class="btn btn-outline-primary" type="submit">Save</button>
+  </form>
 
 {% endblock content %}

@@ -1,5 +1,6 @@
 {% extends "inc/base.html" %}
 {% load static %}
+{% load bootstrap5 %}
 
 {% block content %}
 
@@ -46,13 +47,18 @@
 
   <div class = "underline"></div>
 
-  <div class="mb-3">
-      <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" placeholder="Put your answer here"></textarea>
-  </div>
+  <form action = "{% url 'question' question.id %}", method = "post">
+    <div class="mb-3">
 
-  <div class = "answer-button">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      
+    </div>
+    
+    <div class = "answer-button">
       <button class="btn btn-outline-success" type="submit">Answer!</button>
-  </div>
+    </div>
+  </form>
 
   {% include "inc/paginator.html" %}
 

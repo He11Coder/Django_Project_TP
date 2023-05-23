@@ -1,21 +1,16 @@
 {% extends "inc/base.html" %}
+{% load bootstrap5 %}
 
 {% block content %}
         
   <h1 class="mt-5">Log In</h1>
+  <form action="/login/?next={{request.GET.next}}" method="post">
+    
+    {% csrf_token %}
+    {% bootstrap_form form %}
 
-  <div class="mb-3">
-      <label for="exampleFormControlInput1" class="form-label">Login</label>
-      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Please, enter your login!</label>
-      <input type="login" class="form-control" id="exampleFormControlInput1" placeholder="Login" style="width: 50%;">
-  </div>
-  <div class="mb-3">
-      <label for="exampleFormControlTextarea1" class="form-label">Password</label>
-      <label for="form-error" class="form-label" style="color: rgb(185, 1, 1);">Submit your password!</label>
-      <input type="password" class="form-control" id="exampleFormControlInput1" placeholder="Password" style="width: 50%;">
-  </div>
-  <button class="btn btn-outline-primary" type="submit">Log In!</button>
-
+    <button class="btn btn-outline-primary" type="submit">Log In!</button>
+  </form>
   <div class = "row" style = "margin-top: 10px;"><a href = "{% url "signup" %}">Create new account</a></div>
 
 {% endblock content %}
