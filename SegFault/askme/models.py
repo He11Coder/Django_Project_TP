@@ -81,8 +81,18 @@ class QuestionLikes(models.Model):
     author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
     question_id = models.ForeignKey("Question", on_delete = models.PROTECT, null = True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields = ['question_id', 'author_id'], name = "unique_author_of_question_like")
+        ]
+
 
 class AnswerLikes(models.Model):
     value = models.BooleanField(null = True)
     author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
     answer_id = models.ForeignKey("Answer", on_delete = models.PROTECT, null = True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields = ['answer_id', 'author_id'], name = "unique_author_of_answer_like")
+        ]
