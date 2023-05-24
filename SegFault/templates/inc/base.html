@@ -64,9 +64,11 @@
         </div>
 
         <div class = "col-4">
-          <div class = "user-avatar ">
-            <img src = "{% static "img/ava_tyan.jpg" %}" class = "img-fluid" alt="Avatar">
-          </div>
+          {% if request.user.is_authenticated %}
+            <div class = "user-avatar ">
+              <img src = "{{request.user.profile.avatar.url}}" class = "img-fluid" alt="Avatar">
+            </div>
+          {% endif %}
         </div>
 
         </div>

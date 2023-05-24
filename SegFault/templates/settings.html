@@ -4,12 +4,17 @@
 {% block content %}
 
   <h1 class="mt-5">Settings</h1>
-  <form action = "/settings/", method = "post">
+  <form action = "/settings/", method = "post", enctype = "multipart/form-data">
 
     {% csrf_token %}
     {% bootstrap_form form %}
 
     <button class="btn btn-outline-primary" type="submit">Save</button>
   </form>
+
+  <br>
+  <div>
+    <img id = "settings-avatar" src = "{{request.user.profile.avatar.url}}">
+  </div>
 
 {% endblock content %}

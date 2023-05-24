@@ -9,6 +9,10 @@
       <div class = "col-3">
         <div class = "question-avatar">
           <img src = "{% static "img/avatar2.png" %}" alt = "Avatar">
+
+          <!--Закомментировал для тестов, поскольку в базе с прошлых домашек остались юзеры без аватарок-->
+          <!--<img src = "{{question.author_id.avatar.url}}" alt = "Avatar">-->
+
         </div>
       </div>
       <div class = "col-9">
@@ -19,8 +23,8 @@
           <div class = "col-4">
                   <div class = "vote">
                   <div class="btn-group btn-group-sm" role="group" aria-label="Basic mixed styles example">
-                      <button type="button" class="btn btn-danger">Bad Question</button>
-                      <button type="button" class="btn btn-success">Good Question</button>
+                      <button type="button" data-id = "{{question.id}}" class="btn btn-danger">Bad Question</button>
+                      <button type="button" data-id = "{{question.id}}" class="btn btn-success">Good Question</button>
                   </div>
               </div>
           </div>
@@ -61,5 +65,9 @@
   </form>
 
   {% include "inc/paginator.html" %}
+  
+  <script src="{% static "js/jquery-3.7.0.min.js" %}"></script>
+  <script src="{% static "js/answer.js" %}"></script>
+  <script src="{% static "js/question.js" %}"></script>
 
 {% endblock content %}

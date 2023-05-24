@@ -27,7 +27,7 @@ margin-bottom: 5%;
 }
 
 .rating{
-text-align: right;
+text-align: center;
 font-style: italic;
 }
 
@@ -150,4 +150,18 @@ color: aliceblue
 
 h1 a{
   float: right;
+}
+
+#settings-avatar{
+  height: 150px;
+  width: 150px;
+  object-fit: cover;
+}
+
+.ans-btn-false{
+
+}
+
+.ans-btn-false{
+  
 }

@@ -1,4 +1,5 @@
 {% extends "inc/base.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -9,5 +10,8 @@
   {% endfor %}
 
   {% include "inc/paginator.html" %}
+
+  <script src="{% static "js/jquery-3.7.0.min.js" %}"></script>
+  <script src="{% static "js/question.js" %}"></script>
 
 {% endblock content %}   

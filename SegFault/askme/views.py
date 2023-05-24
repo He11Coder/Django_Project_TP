@@ -1,12 +1,13 @@
 from .forms import LoginForm, RegistrationForm, ProfileEditForm, AskForm, AnswerForm
-from .models import Profile, Question, Answer, Tag, User
+from .models import Profile, Question, Answer, Tag, User, QuestionLikes, AnswerLikes
 from django.shortcuts import render, redirect
 from django.contrib import auth
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, HttpResponse, JsonResponse
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django import forms
 
 
@@ -37,6 +38,7 @@ def makeQuestion_amountOfAnswersList(questions_to_view):
 
     return pairs
 
+@require_GET
 def index(request):
     questions_to_view = Question.objects.newest(LAST_QUESTIONS)
 
@@ -46,6 +48,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@require_http_methods(['GET', 'POST'])
 def question(request, question_id):
     if (question_id == 0 or question_id > Question.objects.newest(THE_LATEST_QUESTION)[0].id):
         return HttpResponseNotFound("Error 404: Not Found")
@@ -75,6 +78,7 @@ def question(request, question_id):
     return render(request, 'question.html', context)
 
 
+@require_http_methods(['GET', 'POST'])
 @login_required(login_url = '/login/')
 def ask(request):
     if request.method == 'GET':
@@ -88,6 +92,7 @@ def ask(request):
     return render(request, 'ask.html', context = {'form' : ask_form})
 
 
+@require_http_methods(['GET', 'POST'])
 def registration(request):
     if request.method == 'GET':
         user_form = RegistrationForm()
@@ -105,6 +110,7 @@ def registration(request):
     return render(request, 'signup.html', context = {'form' : user_form})
 
 
+@require_http_methods(['GET', 'POST'])
 def log_in(request):
     if request.method == 'GET':
         login_form = LoginForm()
@@ -127,6 +133,7 @@ def log_in(request):
     return render(request, 'login.html', context = {'form' : login_form})
 
 
+@require_GET
 def tag(request, tag_name):
     questions_to_view = Question.objects.find_by_tag(tag_name)
 
@@ -142,6 +149,7 @@ def tag(request, tag_name):
     return render(request, 'tag.html', context)
 
 
+@require_GET
 def hot(request):
     questions_to_view = Question.objects.best(TOP_QUESTIONS)
 
@@ -151,6 +159,7 @@ def hot(request):
     return render(request, 'hot.html', context)
 
 
+@require_http_methods(['GET', 'POST'])
 @login_required(login_url='/login/')
 def settings(request):
     if request.method == 'GET':
@@ -168,6 +177,7 @@ def settings(request):
     return render(request, 'settings.html', context = {'form' : settings_form})
 
 
+@require_GET
 @login_required(login_url='/login/', redirect_field_name = 'continue')
 def log_out(request):
     logout(request)
@@ -176,3 +186,142 @@ def log_out(request):
         return redirect(request.GET.get('continue'))
 
     return redirect('index')
+
+
+@login_required(login_url='/login/')
+@require_POST
+def vote_up(request):
+    question_id = request.POST['question_id']
+    
+    question = Question.objects.get(id = question_id)
+    
+    if (not QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile).exists()):
+        question.rating += 1
+
+        like = QuestionLikes.objects.create(question_id = question, author_id = request.user.profile, value = True)
+        like.save()
+    elif (QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = True).exists()):
+        question.rating -= 1
+
+        QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile).delete()
+    elif (QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = False).exists()):
+        question.rating += 2
+
+        QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = False).delete()
+        like = QuestionLikes.objects.create(question_id = question, author_id = request.user.profile, value = True)
+        like.save()
+
+    question.save()
+
+    return JsonResponse({
+        'new_rating' : question.rating
+    })
+
+
+@login_required(login_url='/login/')
+@require_POST
+def vote_down(request):
+    question_id = request.POST['question_id']
+    
+    question = Question.objects.get(id = question_id)
+    
+    if (not QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile).exists()):
+        question.rating -= 1
+
+        dislike = QuestionLikes.objects.create(question_id = question, author_id = request.user.profile, value = False)
+        dislike.save()
+    elif (QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = False).exists()):
+        question.rating += 1
+
+        QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = False).delete()
+    elif (QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = True).exists()):
+        question.rating -= 2
+
+        QuestionLikes.objects.filter(question_id = question, author_id = request.user.profile, value = True).delete()
+        dislike = QuestionLikes.objects.create(question_id = question, author_id = request.user.profile, value = False)
+        dislike.save()
+        
+    question.save()
+
+    return JsonResponse({
+        'new_rating' : question.rating
+    })
+
+
+@login_required(login_url='/login/')
+@require_POST
+def set_correct(request):
+    answer_id = request.POST['answer_id']
+
+    answer = Answer.objects.get(id = answer_id)
+
+    requester = request.user.profile
+    question_author = answer.question_id.author_id
+
+    if (requester == question_author):
+        answer.is_correct = not answer.is_correct
+        answer.save()
+
+    return JsonResponse({
+        'answer_status': answer.is_correct
+    })
+
+
+@login_required(login_url='/login/')
+@require_POST
+def vote_answer_up(request):
+    answer_id = request.POST['answer_id']
+    print(answer_id)
+    answer = Answer.objects.get(id = answer_id)
+    
+    if (not AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile).exists()):
+        answer.rating += 1
+
+        like = AnswerLikes.objects.create(answer_id = answer, author_id = request.user.profile, value = True)
+        like.save()
+    elif (AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = True).exists()):
+        answer.rating -= 1
+
+        AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile).delete()
+    elif (AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = False).exists()):
+        answer.rating += 2
+
+        AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = False).delete()
+        like = AnswerLikes.objects.create(answer_id = answer, author_id = request.user.profile, value = True)
+        like.save()
+
+    answer.save()
+
+    return JsonResponse({
+        'new_rating' : answer.rating
+    })  
+
+
+@login_required(login_url='/login/')
+@require_POST
+def vote_answer_down(request):
+    answer_id = request.POST['answer_id']
+    
+    answer = Answer.objects.get(id = answer_id)
+    
+    if (not AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile).exists()):
+        answer.rating -= 1
+
+        dislike = AnswerLikes.objects.create(answer_id = answer, author_id = request.user.profile, value = False)
+        dislike.save()
+    elif (AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = False).exists()):
+        answer.rating += 1
+
+        AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = False).delete()
+    elif (AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = True).exists()):
+        answer.rating -= 2
+
+        AnswerLikes.objects.filter(answer_id = answer, author_id = request.user.profile, value = True).delete()
+        dislike = AnswerLikes.objects.create(answer_id = answer, author_id = request.user.profile, value = False)
+        dislike.save()
+        
+    answer.save()
+
+    return JsonResponse({
+        'new_rating' : answer.rating
+    })

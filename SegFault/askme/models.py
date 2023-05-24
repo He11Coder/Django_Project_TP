@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.PROTECT, related_name = "profile")
-    avatar = models.ImageField(null = True, blank = True)
+    avatar = models.ImageField(null = True, blank = True, upload_to = 'avatars/%Y/%m/%d/', default = 'logo.png')
     
     def __str__(self):
         return self.user.get_username()
@@ -32,7 +32,7 @@ class QuestionManager(models.Manager):
 class Question(models.Model):
     title = models.CharField(max_length = 255)
     text = models.CharField(max_length = 1000)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default = 0)
     created = models.DateTimeField(auto_now_add = True)
     author_id = models.ForeignKey("Profile", on_delete = models.PROTECT)
     tag = models.ManyToManyField("Tag", blank = True, related_name = "question")
@@ -50,7 +50,7 @@ class AnswerManager(models.Manager):
 
 class Answer(models.Model):
     text = models.CharField(max_length = 1000)
-    rating = models.IntegerField()
+    rating = models.IntegerField(default = 0)
     is_correct = models.BooleanField(default = False)
     created = models.DateTimeField(auto_now_add = True)
     question_id = models.ForeignKey("Question", on_delete = models.PROTECT, related_name = "answer")
